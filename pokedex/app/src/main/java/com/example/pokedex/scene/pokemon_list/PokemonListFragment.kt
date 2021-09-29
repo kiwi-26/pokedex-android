@@ -1,14 +1,14 @@
 package com.example.pokedex.scene.pokemon_list
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.pokedex.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pokedex.databinding.PokemonListFragmentBinding
 import com.example.pokedex.infra.pokeapi.PokeApi
 
 class PokemonListFragment : Fragment() {
@@ -18,18 +18,28 @@ class PokemonListFragment : Fragment() {
     }
 
     private lateinit var viewModel: PokemonListViewModel
+    private val adapter = PokemonListAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.pokemon_list_fragment, container, false)
+        val binding = PokemonListFragmentBinding.inflate(
+                inflater,
+                container,
+                false
+        )
+        binding.pokemonList.adapter = adapter
+        binding.pokemonList.layoutManager = LinearLayoutManager(context)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launchWhenStarted {
-            Log.d("PokemonListFragment", PokeApi.retrofitService.getPokemon().toString())
-
+            PokeApi.retrofitService.getPokemon().body()?.let {
+                adapter.pokemonList = it.results
+            }
+//            Log.d("PokemonListFragment", PokeApi.retrofitService.getPokemon().toString())
         }
     }
 
