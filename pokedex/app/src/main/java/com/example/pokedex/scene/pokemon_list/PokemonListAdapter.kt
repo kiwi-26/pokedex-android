@@ -2,6 +2,7 @@ package com.example.pokedex.scene.pokemon_list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pokedex.databinding.ItemPokemonListBinding
 import com.example.pokedex.infra.pokeapi.entity.PokemonListElement
@@ -16,6 +17,12 @@ class PokemonListAdapter: RecyclerView.Adapter<PokemonListAdapter.ViewHolder>() 
     inner class ViewHolder(private val binding: ItemPokemonListBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(pokemon: PokemonListElement) {
             binding.pokemonName.text = pokemon.name
+
+            binding.root.setOnClickListener {
+                val navHostFragment = binding.root.findNavController()
+                val action = PokemonListFragmentDirections.actionPokemonListFragmentToPokemonDetailFragment(pokemon.url)
+                navHostFragment.navigate(action)
+            }
         }
     }
 
